@@ -4,6 +4,12 @@ setup(
     name="morlingue",
     version="0.0.1",
     packages=find_packages(exclude=["tests"]),
-    install_requires=[],
+    install_requires=[
+        "streamlit",
+        "krakenex",
+        "pandas",
+        "plotly-express",
+        "schedule",
+    ],
     entry_points={"console_scripts": [f"run = morlingue.main:main"]},
 )

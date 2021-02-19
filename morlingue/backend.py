@@ -25,12 +25,12 @@ def insert_in_db(kraken_value: float, db_path: Path = ROOT_PATH.parent / "python
     conn.commit()
 
 
-def display_db(db_path: Path = ROOT_PATH.parent / "pythonsqlite.db"):
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * from assets")
-    # data = cursor.fetchall()
-    # print(data)
+# def display_db(db_path: Path = ROOT_PATH.parent / "pythonsqlite.db"):
+#     conn = sqlite3.connect(db_path)
+#     cursor = conn.cursor()
+#     cursor.execute("SELECT * from assets")
+#     data = cursor.fetchall()
+#     print(data)
 
 
 def job() -> None:
