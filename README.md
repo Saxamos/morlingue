@@ -6,7 +6,7 @@ To run the app, launch the following commands:
 ```
 virtualenv -p python3 venv
 pip install -e .
-python -m morlingue.backend
+run_backend
 streamlit run morlingue/frontend.py 
 ```
 

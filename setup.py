@@ -11,5 +11,5 @@ setup(
         "plotly-express",
         "schedule",
     ],
-    entry_points={"console_scripts": [f"run = morlingue.main:main"]},
+    entry_points={"console_scripts": ["run_backend = morlingue.backend"]},
 )
