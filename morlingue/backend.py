@@ -37,10 +37,10 @@ def job() -> None:
     balance = kraken.query_private("TradeBalance", data={"asset": "ZEUR"})
     total_euros = balance["result"]["eb"]
     insert_in_db(total_euros)
-    print(f"Kraken: {total_euros}€")
+    # print(f"Kraken: {total_euros}€")
 
 
-schedule.every(5).seconds.do(job)
+schedule.every().hours.do(job)
 
 while True:
     schedule.run_pending()
