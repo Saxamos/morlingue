@@ -16,7 +16,8 @@ st.write(
 
 @st.cache(allow_output_mutation=True)
 def connect():
-    return sqlite3.connect(ROOT_PATH.parent / "pythonsqlite.db", check_same_thread=False)
+    db_path = (ROOT_PATH.parent / "pythonsqlite.db").as_posix()
+    return sqlite3.connect(db_path, check_same_thread=False)
 
 
 df = pd.read_sql_query("SELECT * FROM assets", connect())
