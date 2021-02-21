@@ -2,3 +2,5 @@ venv
 init.env
 pythonsqlite.db
 morlingue.pem
+*.egg-info
+__pycache__

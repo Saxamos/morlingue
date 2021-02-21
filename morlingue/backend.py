@@ -13,7 +13,9 @@ KRAKEN_SECRET = os.environ["KRAKEN_SECRET"]
 kraken = krakenex.API(key=KRAKEN_KEY, secret=KRAKEN_SECRET)
 
 
-def insert_in_db(kraken_value: float, db_path: Path = ROOT_PATH.parent / "pythonsqlite.db"):
+def insert_in_db(
+    kraken_value: float, db_path: Path = ROOT_PATH.parent / "pythonsqlite.db"
+) -> None:
     conn = sqlite3.connect(db_path.as_posix())
     cursor = conn.cursor()
     create_table = "CREATE TABLE IF NOT EXISTS assets (id INTEGER PRIMARY KEY,kraken_total FLOAT,date TIME);"
@@ -25,22 +27,13 @@ def insert_in_db(kraken_value: float, db_path: Path = ROOT_PATH.parent / "python
     conn.commit()
 
 
-# def display_db(db_path: Path = ROOT_PATH.parent / "pythonsqlite.db"):
-#     conn = sqlite3.connect(db_path)
-#     cursor = conn.cursor()
-#     cursor.execute("SELECT * from assets")
-#     data = cursor.fetchall()
-#     print(data)
-
-
 def job() -> None:
     balance = kraken.query_private("TradeBalance", data={"asset": "ZEUR"})
     total_euros = balance["result"]["eb"]
     insert_in_db(total_euros)
-    # print(f"Kraken: {total_euros}€")
 
 
-schedule.every().hours.do(job)
+schedule.every().hour.do(job)
 
 while True:
     schedule.run_pending()
