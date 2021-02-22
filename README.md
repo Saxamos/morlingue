@@ -12,7 +12,7 @@ streamlit run morlingue/frontend.py
 ```
 To run it remotely, do the same installation but ssh first:
 ```
-ssh -i "morlingue.pem" ubuntu@3.21.240.92
+ssh -i "morlingue.pem" <USER>@<MORLINGUE_IP>
 cd morlingue
 git pull
 source init.env
