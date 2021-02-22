@@ -6,6 +6,9 @@ import streamlit as st
 
 from morlingue import ROOT_PATH
 
+st.set_page_config(
+    page_title="Morlingue", page_icon=(ROOT_PATH / "favicon.png").as_posix()
+)
 st.write(
     """
 # 💰 Zamal's Morlingue 💰
@@ -19,9 +22,24 @@ def connect():
     return sqlite3.connect(db_path, check_same_thread=False)
 
 
-def _init_asset(dataframe: pd.DataFrame, name: str, val: int, start_date: pd.Timestamp) -> pd.DataFrame:
+def _init_asset(
+    dataframe: pd.DataFrame,
+    name: str,
+    val: int,
+    start_date: pd.Timestamp,
+    kraken_val: int,
+) -> pd.DataFrame:
     dataframe[name] = 0
     dataframe[name][dataframe["date"] > start_date] = val
+    # add rows "date-1" & "date" for viz
+    row = dataframe.iloc[-1, :].to_dict().copy()
+    row["kraken_total"] = kraken_val
+    row["date"] = start_date
+    row[name] = 0
+    dataframe = dataframe.append(row, ignore_index=True)
+    row["date"] = start_date + pd.DateOffset(1)
+    row[name] = val
+    dataframe = dataframe.append(row, ignore_index=True)
     return dataframe
 
 
@@ -35,25 +53,50 @@ def _init_df() -> pd.DataFrame:
         {"date": pd.Timestamp(year=2016, month=9, day=1), "kraken_total": 500},
         ignore_index=True,
     )
-    dataframe = dataframe.append(
-        {"date": pd.Timestamp(year=2020, month=12, day=20), "kraken_total": 30000},
-        ignore_index=True,
-    )
-    dataframe = dataframe.append(
-        {"date": pd.Timestamp(year=2020, month=12, day=21), "kraken_total": 30000},
-        ignore_index=True,
-    )
-    dataframe = dataframe.sort_values(by=["date"])
 
     # init static values
-    dataframe = _init_asset(dataframe, "filly", 2100, pd.Timestamp(year=2020, month=7, day=1))
-    dataframe = _init_asset(dataframe, "mg", 21000, pd.Timestamp(year=2020, month=12, day=20))
-    dataframe = _init_asset(dataframe, "vieplus", 12000, pd.Timestamp(year=2020, month=11, day=1))
-    dataframe = _init_asset(dataframe, "loan", 13000, pd.Timestamp(year=2019, month=4, day=1))
-    dataframe = _init_asset(dataframe, "gold", 10000, pd.Timestamp(year=2020, month=9, day=1))
-    dataframe = _init_asset(dataframe, "sax", 6000, pd.Timestamp(year=2018, month=9, day=1))
+    init_values = [
+        {
+            "name": "sax",
+            "val": 6000,
+            "start_date": pd.Timestamp(year=2018, month=9, day=1),
+            "kraken_val": 5000,
+        },
+        {
+            "name": "loan",
+            "val": 13000,
+            "start_date": pd.Timestamp(year=2019, month=4, day=1),
+            "kraken_val": 10000,
+        },
+        {
+            "name": "filly",
+            "val": 2100,
+            "start_date": pd.Timestamp(year=2020, month=7, day=1),
+            "kraken_val": 10000,
+        },
+        {
+            "name": "gold",
+            "val": 10000,
+            "start_date": pd.Timestamp(year=2020, month=9, day=1),
+            "kraken_val": 10000,
+        },
+        {
+            "name": "vieplus",
+            "val": 12000,
+            "start_date": pd.Timestamp(year=2020, month=11, day=1),
+            "kraken_val": 11000,
+        },
+        {
+            "name": "mg",
+            "val": 21000,
+            "start_date": pd.Timestamp(year=2020, month=12, day=20),
+            "kraken_val": 30000,
+        },
+    ]
+    for el in init_values:
+        dataframe = _init_asset(dataframe, **el)
 
-    return dataframe
+    return dataframe.sort_values(by=["date"])
 
 
 df = _init_df()
@@ -71,6 +114,5 @@ fig.add_scatter(x=df["date"], y=df["vieplus"], mode="lines", name="Vieplus 🏥"
 fig.add_scatter(x=df["date"], y=df["mg"], mode="lines", name="MG 🏎️")
 fig.add_scatter(x=df["date"], y=df["gold"], mode="lines", name="Gold 🥇")
 fig.add_scatter(x=df["date"], y=df["sax"], mode="lines", name="Sax 🎷")
-
 fig.add_scatter(x=df["date"], y=df.sum(axis=1), mode="lines", name="Total 💶")
 st.plotly_chart(fig)

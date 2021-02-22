@@ -25,10 +25,9 @@ ps aux | grep streamlit
 kill -9 26354
 ```
 
-
 ## TODO
 
-- intergrate all assets with scrapper
+- intergrate dynamics assets with scrapper
 - automated CI and deployment travis
 - ML model for forecasting
 - try dash frontend
