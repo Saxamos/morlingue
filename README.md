@@ -27,7 +27,10 @@ kill -9 26354
 
 ## TODO
 
+- integrate value variation (gold)
+- integrate value variation (eth metamask)
 - intergrate dynamics assets with scrapper
 - automated CI and deployment travis
 - ML model for forecasting
 - try dash frontend
+- sort lines

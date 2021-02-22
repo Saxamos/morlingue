@@ -47,6 +47,7 @@ def _init_df() -> pd.DataFrame:
     # load from bdd
     dataframe = pd.read_sql_query("SELECT * FROM assets", connect())
     dataframe["date"] = pd.to_datetime(dataframe["date"])
+    dataframe = dataframe.drop(columns=["id"], axis=1)
 
     # init values from the past
     dataframe = dataframe.append(
@@ -106,8 +107,8 @@ kraken_total_df.name = "kraken ₿"
 fig = px.line(kraken_total_df, labels={"value": "€", "date": ""})
 
 # TODO: dynamic
-df["metamask"] = 7959
-fig.add_scatter(x=df["date"], y=df["metamask"], mode="lines", name="ETH Ξ")
+# df["metamask"] = 7959
+# fig.add_scatter(x=df["date"], y=df["metamask"], mode="lines", name="ETH Ξ")
 fig.add_scatter(x=df["date"], y=df["filly"], mode="lines", name="Filly 🐎")
 fig.add_scatter(x=df["date"], y=df["loan"], mode="lines", name="RB's loan 🏦")
 fig.add_scatter(x=df["date"], y=df["vieplus"], mode="lines", name="Vieplus 🏥")
