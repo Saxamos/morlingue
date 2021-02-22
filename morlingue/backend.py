@@ -31,6 +31,7 @@ def job() -> None:
     balance = kraken.query_private("TradeBalance", data={"asset": "ZEUR"})
     total_euros = balance["result"]["eb"]
     insert_in_db(total_euros)
+    print(total_euros)
 
 
 schedule.every().hour.do(job)

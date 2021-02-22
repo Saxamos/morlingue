@@ -7,7 +7,7 @@ import streamlit as st
 from morlingue import ROOT_PATH
 
 st.set_page_config(
-    page_title="Morlingue", page_icon=(ROOT_PATH / "favicon.png").as_posix()
+    page_title="Morlingue", page_icon=(ROOT_PATH.parent / "favicon.png").as_posix()
 )
 st.write(
     """
