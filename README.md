@@ -34,3 +34,4 @@ kill -9 26354
 - ML model for forecasting
 - try dash frontend
 - sort lines
+- create kraken all values plot
