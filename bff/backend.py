@@ -1,21 +1,34 @@
 import os
 
-import googleapiclient.discovery
-import googleapiclient.errors
+import pandas as pd
+from pyyoutube import Api
 
-CHANNEL_ID = "UC5oWzIBclqteQvZg5WDjdKQ"
+PLAYLIST_ID = "PLvHyFbz_PpaZ7833xPxXXPgSi50phCH-P"
+
+api = Api(api_key=os.environ["GOOGLE_API_KEY"])
 
 
 def fetch_youtube_data():
-    youtube = googleapiclient.discovery.build(
-        "youtube", "v3", developerKey=os.environ["GOOGLE_API_KEY"]
-    )
-    request = youtube.channels().list(
-        part="snippet,contentDetails,statistics", id=CHANNEL_ID
-    )
-    response = request.execute()
+    video_list = []
+    playlist = api.get_playlist_items(playlist_id=PLAYLIST_ID)
+    next_page = playlist.nextPageToken
+    video_list.extend(playlist.items)
+    while next_page:
+        playlist = api.get_playlist_items(playlist_id=PLAYLIST_ID, page_token=next_page)
+        next_page = playlist.nextPageToken
+        video_list.extend(playlist.items)
 
-    name = response["items"][0]["snippet"]["description"]
-    statistics = response["items"][0]["statistics"]
+    dates = []
+    titles = []
+    views = []
+    for video in video_list:
+        video = api.get_video_by_id(video_id=video.contentDetails.videoId).items[0]
+        dates.append(video.snippet.publishedAt)
+        titles.append(video.snippet.title)
+        views.append(int(video.statistics.viewCount))
 
-    return name, statistics
+    dataframe = pd.DataFrame()
+    dataframe["date"] = pd.to_datetime(dates)
+    dataframe["title"] = titles
+    dataframe["views"] = views
+    return dataframe.set_index("date")
