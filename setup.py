@@ -10,6 +10,9 @@ setup(
         "pandas",
         "plotly-express",
         "schedule",
+        "google-api-python-client",
+        "google-auth-oauthlib",
+        "google-auth-httplib2"
     ],
     entry_points={"console_scripts": ["run_backend = morlingue.backend"]},
 )
