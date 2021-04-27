@@ -22,10 +22,12 @@ def fetch_youtube_data():
     titles = []
     views = []
     for video in video_list:
-        video = api.get_video_by_id(video_id=video.contentDetails.videoId).items[0]
-        dates.append(video.snippet.publishedAt)
-        titles.append(video.snippet.title)
-        views.append(int(video.statistics.viewCount))
+        videos = api.get_video_by_id(video_id=video.contentDetails.videoId).items
+        if videos:
+            video = videos[0]
+            dates.append(video.snippet.publishedAt)
+            titles.append(video.snippet.title)
+            views.append(int(video.statistics.viewCount))
 
     dataframe = pd.DataFrame()
     dataframe["date"] = pd.to_datetime(dates)

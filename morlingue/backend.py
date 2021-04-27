@@ -63,4 +63,4 @@ def job(
 
 while True:
     job(connection, kraken, crypto_dict.copy())
-    time.sleep(5)
+    time.sleep(600)

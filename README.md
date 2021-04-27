@@ -17,7 +17,9 @@ cd morlingue
 git pull
 source init.env
 nohup run_backend &
-nohup streamlit run morlingue/frontend.py &
+nohup streamlit run morlingue/front_straemlit.py &
+nohup python morlingue/front_dash.py &
+nohup streamlit run bff/frontend.py &
 ```
 To monitor your running app:
 ```
