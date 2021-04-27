@@ -23,11 +23,11 @@ def connect():
 
 
 def _init_asset(
-    dataframe: pd.DataFrame,
-    name: str,
-    val: int,
-    start_date: pd.Timestamp,
-    kraken_val: int,
+        dataframe: pd.DataFrame,
+        name: str,
+        val: int,
+        start_date: pd.Timestamp,
+        kraken_val: int,
 ) -> pd.DataFrame:
     dataframe[name] = 0
     dataframe[name][dataframe["date"] > start_date] = val
@@ -116,4 +116,11 @@ fig.add_scatter(x=df["date"], y=df["mg"], mode="lines", name="MG 🏎️")
 fig.add_scatter(x=df["date"], y=df["gold"], mode="lines", name="Gold 🥇")
 fig.add_scatter(x=df["date"], y=df["sax"], mode="lines", name="Sax 🎷")
 fig.add_scatter(x=df["date"], y=df.sum(axis=1), mode="lines", name="Total 💶")
+st.plotly_chart(fig)
+
+dataframe = pd.read_sql_query("SELECT * FROM crypto", connect())
+dataframe["date"] = pd.to_datetime(dataframe["date"])
+fig = px.line(x=dataframe["date"], y=dataframe["XXBT"], labels={"y": "€", "x": ""})
+fig.add_scatter(x=dataframe["date"], y=dataframe["XLTC"])
+fig.add_scatter(x=dataframe["date"], y=dataframe["XETH"])
 st.plotly_chart(fig)

@@ -29,9 +29,8 @@ kill -9 26354
 
 - integrate value variation (gold)
 - integrate value variation (eth metamask)
-- intergrate dynamics assets with scrapper
+- integrate dynamics assets with scrapper
 - automated CI and deployment travis
 - ML model for forecasting
-- try dash frontend
 - sort lines
 - create kraken all values plot
