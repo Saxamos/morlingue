@@ -8,7 +8,7 @@ virtualenv -p python3 venv
 source init.env
 pip install -e .
 run_backend
-streamlit run morlingue/frontend.py
+python morlingue/frontend.py
 ```
 To run it remotely, do the same installation but ssh first:
 ```
@@ -17,8 +17,7 @@ cd morlingue
 git pull
 source init.env
 nohup run_backend &
-nohup streamlit run morlingue/front_straemlit.py &
-nohup python morlingue/front_dash.py &
+nohup python morlingue/frontend.py &
 nohup streamlit run bff/frontend.py &
 ```
 To monitor your running app:
@@ -29,10 +28,10 @@ kill -9 26354
 
 ## TODO
 
+- integrate all asset that were in streamlit
+- parametrize sliding window size
 - integrate value variation (gold)
 - integrate value variation (eth metamask)
 - integrate dynamics assets with scrapper
 - automated CI and deployment travis
 - ML model for forecasting
-- sort lines
-- create kraken all values plot
