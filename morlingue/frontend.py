@@ -48,15 +48,14 @@ app.layout = html.Div(
 @app.callback(
     Output("kraken-graph", "figure"), Input("interval-component", "n_intervals")
 )
-def update_graph_live(n):
+def update_kraken_graph_live(n):
     df_assets = pd.read_sql_query("SELECT * FROM assets", DB_CONNECTION)
     df_assets["date"] = pd.to_datetime(df_assets["date"])
     df_assets = df_assets.drop(columns=["id"], axis=1)
     df_assets = df_assets.set_index("date")
 
     fig = px.line(height=800, labels={"y": "€", "x": ""})
-    for crypto in df_assets.columns:
-        fig.add_scatter(x=df_assets.index, y=df_assets[crypto], name=crypto)
+    fig.add_scatter(x=df_assets.index, y=df_assets["kraken_total"], name="kraken_total")
     fig.update_layout(
         plot_bgcolor=COLORS["background"],
         paper_bgcolor=COLORS["background"],
@@ -71,19 +70,17 @@ def update_graph_live(n):
 @app.callback(
     Output("sliding-graph", "figure"), Input("interval-component", "n_intervals")
 )
-def update_graph_live(n):
+def update_sliding_graph_live(n):
     df_assets = pd.read_sql_query("SELECT * FROM assets", DB_CONNECTION)
     df_assets["date"] = pd.to_datetime(df_assets["date"])
     df_assets = df_assets.drop(columns=["id"], axis=1)
     df_assets = df_assets.set_index("date")
 
-    range_x = [
-        (df_assets.index[-1] - pd.Timedelta(days=10)),
-        df_assets.index[-1],
-    ]
-    fig = px.line(height=800, labels={"y": "€", "x": ""}, range_x=range_x)
-    for crypto in df_assets.columns:
-        fig.add_scatter(x=df_assets.index, y=df_assets[crypto], name=crypto)
+    # filter by time
+    df_assets = df_assets.loc[df_assets.index[-1] - pd.Timedelta(days=10):, :]
+
+    fig = px.line(height=800, labels={"y": "€", "x": ""})
+    fig.add_scatter(x=df_assets.index, y=df_assets["kraken_total"], name="kraken_total")
     fig.update_layout(
         plot_bgcolor=COLORS["background"],
         paper_bgcolor=COLORS["background"],
@@ -91,7 +88,7 @@ def update_graph_live(n):
     )
     fig.update_traces(marker=dict(color="cyan"))
     fig.update_xaxes(gridcolor=COLORS["line"])
-    fig.update_yaxes(gridcolor=COLORS["line"])
+    fig.update_yaxes(gridcolor=COLORS["line"], rangemode="normal")
     return fig
 
 

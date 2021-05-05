@@ -28,6 +28,7 @@ kill -9 26354
 
 ## TODO
 
+- cache + refacto https://dash.plotly.com/sharing-data-between-callbacks
 - integrate all asset that were in streamlit
 - parametrize sliding window size
 - integrate value variation (gold)
