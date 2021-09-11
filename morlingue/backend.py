@@ -33,7 +33,6 @@ def _insert_kraken(
     # cursor.execute(create_assets_table)
 
     # insert_metamask_col_in_table = """ALTER TABLE assets ADD metamask_total FLOAT"""
-    # cursor.execute("PRAGMA legacy_alter_table=ON")
     # cursor.execute(insert_metamask_col_in_table)
 
     insert_asset = (
