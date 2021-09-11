@@ -16,6 +16,7 @@ ssh -i "morlingue.pem" <USER>@<MORLINGUE_IP>
 cd morlingue
 git pull
 source init.env
+pip install .
 nohup run_backend &
 nohup run_frontend &
 nohup streamlit run bff/frontend.py &
