@@ -10,6 +10,13 @@ setup(
         "pandas",
         "plotly-express",
         "python-youtube",
+        "web3",
+        "cryptocompare",
     ],
-    entry_points={"console_scripts": ["run_backend = morlingue.backend"]},
+    entry_points={
+        "console_scripts": [
+            "run_backend = morlingue.backend:main",
+            "run_frontend = morlingue.frontend:main",
+        ]
+    },
 )
