@@ -4,3 +4,4 @@ pythonsqlite.db
 morlingue.pem
 *.egg-info
 __pycache__
+.mypy_cache

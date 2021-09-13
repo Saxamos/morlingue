@@ -1,3 +1,4 @@
+import datetime
 import os
 import sqlite3
 import time
@@ -6,7 +7,7 @@ import krakenex
 from cryptocompare import cryptocompare
 from web3 import Web3
 
-from morlingue import ROOT_PATH, HOUR
+from morlingue import HOUR, ROOT_PATH
 
 KRAKEN_API = krakenex.API(
     key=os.environ["KRAKEN_KEY"], secret=os.environ["KRAKEN_SECRET"]
@@ -20,25 +21,20 @@ WEB3 = Web3(Web3.HTTPProvider(INFURA_URL))
 
 def _insert_kraken(
     connection: sqlite3.Connection,
-    current_time: time,
+    current_time: str,
     kraken_total: float,
     metamask_total: float,
 ) -> None:
     cursor = connection.cursor()
 
-    # create_assets_table = (
-    #     "CREATE TABLE IF NOT EXISTS assets "
-    #     "(id INTEGER PRIMARY KEY,kraken_total FLOAT,date TIME);"
-    # )
-    # cursor.execute(create_assets_table)
-
-    # insert_metamask_col_in_table = """ALTER TABLE assets ADD metamask_total FLOAT"""
-    # cursor.execute(insert_metamask_col_in_table)
+    create_assets_table = """CREATE TABLE IF NOT EXISTS 
+    assets (id INTEGER PRIMARY KEY,date TIME,kraken_total FLOAT,metamask_total FLOAT);"""
+    cursor.execute(create_assets_table)
 
     insert_asset = (
-        "INSERT INTO assets (kraken_total,metamask_total,date) VALUES (?,?,?);"
+        """INSERT INTO assets (date,kraken_total,metamask_total) VALUES (?,?,?);"""
     )
-    cursor.execute(insert_asset, (kraken_total, metamask_total, current_time))
+    cursor.execute(insert_asset, (current_time, kraken_total, metamask_total))
     connection.commit()
 
 
