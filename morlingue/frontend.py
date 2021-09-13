@@ -3,10 +3,10 @@ import sqlite3
 import dash
 import pandas as pd
 import plotly.express as px
-from dash import html, dcc
+from dash import dcc, html
 from dash.dependencies import Input, Output
 
-from morlingue import ROOT_PATH, HOUR
+from morlingue import HOUR, ROOT_PATH
 
 COLORS = {
     "background": "lightslategray",
@@ -82,7 +82,7 @@ def update_sliding_graph_live(n):
     df_assets = df_assets.set_index("date")
 
     # filter by time
-    df_assets = df_assets.loc[df_assets.index[-1] - pd.Timedelta(days=10):, :]
+    df_assets = df_assets.loc[df_assets.index[-1] - pd.Timedelta(days=10) :, :]
 
     fig = px.line(height=800, labels={"y": "€", "x": ""})
     fig.add_scatter(x=df_assets.index, y=df_assets["kraken_total"], name="kraken_total")

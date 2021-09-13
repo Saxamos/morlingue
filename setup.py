@@ -12,6 +12,9 @@ setup(
         "python-youtube",
         "web3",
         "cryptocompare",
+        "mypy",
+        "black",
+        "isort",
     ],
     entry_points={
         "console_scripts": [
