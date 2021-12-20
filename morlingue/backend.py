@@ -1,4 +1,4 @@
-import datetime
+import logging
 import os
 import sqlite3
 import time
@@ -8,6 +8,9 @@ from cryptocompare import cryptocompare
 from web3 import Web3
 
 from morlingue import HOUR, ROOT_PATH
+
+logging.getLogger().setLevel(logging.INFO)
+
 
 KRAKEN_API = krakenex.API(
     key=os.environ["KRAKEN_KEY"], secret=os.environ["KRAKEN_SECRET"]
@@ -39,18 +42,21 @@ def _insert_kraken(
 
 
 def job(connection: sqlite3.Connection, kraken: krakenex.API) -> None:
-    current_time = time.strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        current_time = time.strftime("%Y-%m-%d %H:%M:%S")
 
-    kraken_total = kraken.query_private("TradeBalance", data={"asset": "ZEUR"})[
-        "result"
-    ]["eb"]
+        kraken_total = kraken.query_private("TradeBalance", data={"asset": "ZEUR"})[
+            "result"
+        ]["eb"]
 
-    metamask_balance = WEB3.eth.getBalance(os.environ["METAMASK_ACCOUNT"])
-    eth_value = cryptocompare.get_price("ETH")["ETH"]["EUR"]
-    metamask_total = float(WEB3.fromWei(metamask_balance, "ether")) * eth_value
+        metamask_balance = WEB3.eth.getBalance(os.environ["METAMASK_ACCOUNT"])
+        eth_value = cryptocompare.get_price("ETH")["ETH"]["EUR"]
+        metamask_total = float(WEB3.fromWei(metamask_balance, "ether")) * eth_value
 
-    _insert_kraken(connection, current_time, kraken_total, metamask_total)
-    print("request")
+        _insert_kraken(connection, current_time, kraken_total, metamask_total)
+        logging.info("Request: success")
+    except Exception as e:
+        logging.warning(f"Request: failed: {e}")
 
 
 def main() -> None:

@@ -16,7 +16,7 @@ check_type_format:
 	black .
 
 .PHONY: tests
-tests_units:
+tests:
 	python -u -m pytest tests -vv
 
 .PHONY: clean
