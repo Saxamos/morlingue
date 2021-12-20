@@ -11,7 +11,7 @@ run_frontend
 ```
 To run it remotely, do the same installation but ssh first:
 ```
-ssh -i "morlingue.pem" <USER>@<MORLINGUE_IP>
+ssh ubuntu@18.224.181.98
 cd morlingue
 git pull
 source init.env
