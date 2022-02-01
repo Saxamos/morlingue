@@ -22,6 +22,10 @@ To monitor your running app:
 ps aux | grep python
 kill 26354
 ```
+To back up locally the database:
+```
+scp ubuntu@18.224.181.98:/home/ubuntu/morlingue/pythonsqlite.db pythonsqlite.db
+```
 
 ## TODO
 
