@@ -2,6 +2,7 @@ import logging
 import os
 import sqlite3
 import time
+from typing import Tuple
 
 import krakenex
 from cryptocompare import cryptocompare
@@ -12,22 +13,54 @@ from morlingue import HOUR, ROOT_PATH
 logging.getLogger().setLevel(logging.INFO)
 
 
-KRAKEN_API = krakenex.API(
-    key=os.environ["KRAKEN_KEY"], secret=os.environ["KRAKEN_SECRET"]
-)
-CRYPTO_DICT = KRAKEN_API.query_private("Balance")["result"]
-DB_CONNECTION = sqlite3.connect((ROOT_PATH.parent / "pythonsqlite.db").as_posix())
+def _request_data(kraken: krakenex.API, web3: Web3) -> Tuple[float, float]:
 
-INFURA_URL = f"https://mainnet.infura.io/v3/{os.environ['INFURA_ID']}"
-WEB3 = Web3(Web3.HTTPProvider(INFURA_URL))
+    ### TODO: request uniswap
+    token_address = "0xfcb910d871d7e94f5a566b7b32fb2b19583c09d7"
+    token_address_2 = "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852"
+    abi = [
+        {
+            "constant": True,
+            "inputs": [{"name": "_owner", "type": "address"}],
+            "name": "balanceOf",
+            "outputs": [{"name": "balance", "type": "uint256"}],
+            "type": "function",
+        },
+        {
+            "constant": True,
+            "inputs": [],
+            "name": "totalSupply",
+            "outputs": [{"name": "", "type": "uint256"}],
+            "payable": False,
+            "stateMutability": "view",
+            "type": "function",
+        },
+    ]
+    token = web3.eth.contract(address=Web3.toChecksumAddress(token_address), abi=abi)
+    token_balance = token.functions.balanceOf(os.environ["METAMASK_ACCOUNT"]).call()
+    token_total_supply = token.functions.totalSupply().call()
+    ### TODO: convert to eur => https://etherscan.io/address/0xe07441ffb81ba73990c059463e7b253b3093f866
+    # https://docs.uniswap.org/protocol/V2/reference/smart-contracts/pair#price0cumulativelast
+    # https://v2.info.uniswap.org/pair/0xfcb910d871d7e94f5a566b7b32fb2b19583c09d7
+    # https://etherscan.io/token/0xfcb910d871d7e94f5a566b7b32fb2b19583c09d7?a=0xe07441ffb81ba73990c059463e7b253b3093f866
+    ### TODO: request uniswap
+
+    kraken_total = kraken.query_private("TradeBalance", data={"asset": "ZEUR"})[
+        "result"
+    ]["eb"]
+    metamask_balance = web3.eth.getBalance(os.environ["METAMASK_ACCOUNT"])
+    eth_value = cryptocompare.get_price("ETH")["ETH"]["EUR"]
+    metamask_total = float(web3.fromWei(metamask_balance, "ether")) * eth_value
+
+    logging.info("Request: success")
+
+    return kraken_total, metamask_total
 
 
-def _insert_kraken(
-    connection: sqlite3.Connection,
-    current_time: str,
-    kraken_total: float,
-    metamask_total: float,
+def _persist_in_db(
+    connection: sqlite3.Connection, kraken_total: float, metamask_total: float
 ) -> None:
+    current_time = time.strftime("%Y-%m-%d %H:%M:%S")
     cursor = connection.cursor()
 
     create_assets_table = """CREATE TABLE IF NOT EXISTS 
@@ -41,25 +74,22 @@ def _insert_kraken(
     connection.commit()
 
 
-def job(connection: sqlite3.Connection, kraken: krakenex.API) -> None:
-    try:
-        current_time = time.strftime("%Y-%m-%d %H:%M:%S")
-
-        kraken_total = kraken.query_private("TradeBalance", data={"asset": "ZEUR"})[
-            "result"
-        ]["eb"]
-
-        metamask_balance = WEB3.eth.getBalance(os.environ["METAMASK_ACCOUNT"])
-        eth_value = cryptocompare.get_price("ETH")["ETH"]["EUR"]
-        metamask_total = float(WEB3.fromWei(metamask_balance, "ether")) * eth_value
-
-        _insert_kraken(connection, current_time, kraken_total, metamask_total)
-        logging.info("Request: success")
-    except Exception as e:
-        logging.warning(f"Request: failed: {e}")
-
-
 def main() -> None:
+
+    kraken_api = krakenex.API(
+        key=os.environ["KRAKEN_KEY"], secret=os.environ["KRAKEN_SECRET"]
+    )
+    db_connection = sqlite3.connect((ROOT_PATH.parent / "pythonsqlite.db").as_posix())
+    infura_url = f"https://mainnet.infura.io/v3/{os.environ['INFURA_ID']}"
+    web3 = Web3(Web3.HTTPProvider(infura_url))
+
     while True:
-        job(DB_CONNECTION, KRAKEN_API)
+
+        try:
+            kraken_total, metamask_total = _request_data(kraken_api, web3)
+            _persist_in_db(db_connection, kraken_total, metamask_total)
+
+        except Exception as e:
+            logging.warning(f"Request: failed: {e}")
+
         time.sleep(HOUR)

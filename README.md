@@ -29,10 +29,9 @@ scp ubuntu@18.224.181.98:/home/ubuntu/morlingue/pythonsqlite.db pythonsqlite.db
 
 ## TODO
 
-- integrate uniswap pool
-- integrate gold
+- doc & migration script
+- separate kraken from staking in second graph
 - cache + refacto https://dash.plotly.com/sharing-data-between-callbacks
-- integrate all asset that were in streamlit
-- parametrize sliding window size
+- integrate all asset that were in streamlit (gold, etc.) + loan?
 - automated CI and deployment travis
 - ML model for forecasting
