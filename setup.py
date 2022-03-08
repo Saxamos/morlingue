@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="morlingue",
-    version="0.0.1",
+    version="1.0.0",
     packages=find_packages(exclude=["tests"]),
     install_requires=[
         "dash",
@@ -12,10 +12,8 @@ setup(
         "python-youtube",
         "web3",
         "cryptocompare",
-        "mypy",
-        "black",
-        "isort",
     ],
+    extras_require={"dev": ["pytest", "mypy", "black", "isort"]},
     entry_points={
         "console_scripts": [
             "run_backend = morlingue.backend:main",

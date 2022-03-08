@@ -1,13 +1,12 @@
 .PHONY: setup_env
 setup_env: clean
-	virtualenv -p python3 venv
-	. venv/bin/activate; pip install -e .
+	pip install -e .
 
 .PHONY: run_prod
 run_prod: setup_env
-	. venv/bin/activate; nohup run_backend &
-	. venv/bin/activate; nohup run_frontend &
-	. venv/bin/activate; nohup streamlit run bff/frontend.py &
+	nohup run_backend &
+	nohup run_frontend &
+	nohup streamlit run bff/frontend.py &
 
 .PHONY: check_type_format
 check_type_format:
