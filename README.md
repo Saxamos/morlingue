@@ -30,11 +30,12 @@ scp ubuntu@18.224.181.98:/home/ubuntu/morlingue/pythonsqlite.db pythonsqlite.db
 ## TODO
 
 - transfert data from Joey
+- setup aws instance
 - finish add uniswap
+- [add DNS](https://www.noip.com/)
 - doc & migration script
 - separate kraken from staking in second graph
 - add boursorama
-- cache + refacto https://dash.plotly.com/sharing-data-between-callbacks
-- integrate all asset that were in streamlit (gold, etc.) + loan?
+- integrate more assets (gold, loan, ...)
 - automated CI and deployment travis
 - ML model for forecasting
